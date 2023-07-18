@@ -48,13 +48,29 @@ then
 		exit 1
 	fi
 fi
-#echo "Removing the old writer utility and compiling as a native application"
-#make clean
-#make
+
+
+
+echo "Compile arm64 version of writer app"
+make clean
+make CROSS_COMPILE=aarch64-none-linux-gnu-
+
+aarch64-none-linux-gnu-gcc --print-sysroot -v &> ../assignments/assignment2/cross-compile.txt
+if [ ! $? -eq 0 ]
+then
+	echo "failed: cross compiler not found"
+	exit 1
+fi
+
+file writer &> ../assignments/assignment2/fileresult.txt
+
+echo "Removing the old writer utility and compiling as a native application"
+make clean
+make
 
 for i in $( seq 1 $NUMFILES)
 do
-	./writer.sh "$WRITEDIR/${username}$i.txt" "$WRITESTR"
+	./writer "$WRITEDIR/${username}$i.txt" "$WRITESTR"
 done
 
 OUTPUTSTRING=$(./finder.sh "$WRITEDIR" "$WRITESTR")
